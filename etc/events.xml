@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_place_before">
+        <observer name="save_user_id_in_order" instance="MageSuite\ServerSideGoogleAnalytics\Observer\SaveUserIdInOrder"/>
+    </event>
+    <event name="sales_order_place_after">
+        <observer name="add_purchase_event_to_queue" instance="MageSuite\ServerSideGoogleAnalytics\Observer\AddPurchaseEventToQueue" />
+    </event>
+    <event name="sales_order_creditmemo_refund">
+        <observer name="add_refund_event_to_queue_creditmemo" instance="MageSuite\ServerSideGoogleAnalytics\Observer\AddRefundEventToQueueCreditmemo"/>
+    </event>
+    <event name="order_cancel_after">
+        <observer name="add_refund_event_to_queue_order_cancelation" instance="MageSuite\ServerSideGoogleAnalytics\Observer\AddRefundEventToQueueOrderCancelation"/>
+    </event>
+</config>
