@@ -42,7 +42,7 @@ abstract class AbstractBuilder
         $order = $this->getOrder();
         $eventData = [];
         $eventData['t'] = 'event';
-        $eventData['uid'] = (string)$order->getData('ga_user_id');
+        $eventData['cid'] = (string)$order->getData('ga_user_id');
         $eventData['ti'] = $order->getIncrementId();
         $eventData['ta'] = $order->getStoreName();
         $eventData['tr'] = (float)$order->getGrandTotal();

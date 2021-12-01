@@ -41,7 +41,6 @@ class Client
         $this->debugLog($debugData);
         $curl = $this->curlFactory->create();
         $curl->post($apiUrl, $params);
-        $curl->getStatus();
         $debugData = ['http_code' => $curl->getStatus()];
         $this->debugLog($debugData);
 
