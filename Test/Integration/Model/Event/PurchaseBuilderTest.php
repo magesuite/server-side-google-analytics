@@ -37,13 +37,13 @@ class PurchaseBuilderTest extends \PHPUnit\Framework\TestCase
             ->toArray();
         $expectedArray = [
             't' => 'event',
-            'uid' => 'dummy_id',
+            'cid' => 'dummy_id',
             'uip' => '',
             'dp' => '/checkout/onepage/success/',
             'ti' => '100000001',
             'ta' => $order->getStoreName(),
             'tr' => 100.0,
-            'ts' => '0.0000',
+            'ts' => 0.0,
             'tt' => 0.0,
             'cu' => 'USD',
             'pa' => 'purchase',

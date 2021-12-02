@@ -48,7 +48,7 @@ class RefundBuilderTest extends \PHPUnit\Framework\TestCase
             'pr1nm' => 'Simple Product',
             'pr1pr' => 10.0,
             'pr1qt' => 2,
-            'uid' => 'dummy_id'
+            'cid' => 'dummy_id'
         ];
 
         $this->assertEquals($expectedArray, $eventData);
