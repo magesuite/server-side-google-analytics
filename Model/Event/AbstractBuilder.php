@@ -6,17 +6,30 @@ namespace MageSuite\ServerSideGoogleAnalytics\Model\Event;
 abstract class AbstractBuilder
 {
     /**
+     * Google API product limit per request
+     */
+    const PRODUCT_LIMIT = 200;
+
+    /**
      * @var \Magento\Sales\Model\Order
      */
     protected $order;
+
+    /**
+     * @var \MageSuite\ServerSideGoogleAnalytics\Model\ProductDataProviderInterface
+     */
+    protected $productDataProvider;
 
     /**
      * @var \MageSuite\ServerSideGoogleAnalytics\Helper\Configuration
      */
     protected $configuration;
 
-    public function __construct(\MageSuite\ServerSideGoogleAnalytics\Helper\Configuration $configuration)
-    {
+    public function __construct(
+        \MageSuite\ServerSideGoogleAnalytics\Model\ProductDataProviderInterface $productDataProvider,
+        \MageSuite\ServerSideGoogleAnalytics\Helper\Configuration $configuration
+    ) {
+        $this->productDataProvider = $productDataProvider;
         $this->configuration = $configuration;
     }
 
@@ -46,7 +59,9 @@ abstract class AbstractBuilder
         $eventData['ti'] = $order->getIncrementId();
         $eventData['ta'] = $order->getStoreName();
         $eventData['tr'] = (float)$order->getGrandTotal();
-        $eventData['ts'] = $this->isPriceExcludingTax() ? (float)$order->getShippingAmount() : (float)$order->getShippingInclTax();
+        $eventData['ts'] = $this->isPriceExcludingTax()
+            ? (float)$order->getShippingAmount()
+            : (float)$order->getShippingInclTax();
         $eventData['tt'] = (float)$order->getTaxAmount();
         $eventData['cu'] = $order->getOrderCurrencyCode();
         $eventData['pa'] = $this->getProductAction();
@@ -68,13 +83,12 @@ abstract class AbstractBuilder
 
         /** @var \Magento\Sales\Model\Order\Item $orderItem */
         foreach ($this->getOrder()->getAllVisibleItems() as $orderItem) {
-            $productKey = 'pr' . $productIndex;
-            $productData[$productKey . 'id'] = (string)$orderItem->getSku();
-            $productData[$productKey . 'nm'] = (string)$orderItem->getName();
-            $productData[$productKey . 'pr'] = $this->isPriceExcludingTax()
-                ? (float)$orderItem->getPrice() : (float)$orderItem->getPriceInclTax();
-            $productData[$productKey . 'qt'] = (int)$orderItem->getQtyOrdered();
+            $productData = $this->productDataProvider->getProductData($orderItem, $productIndex);
             $productIndex++;
+
+            if ($productIndex > self::PRODUCT_LIMIT) {
+                break;
+            }
         }
 
         return $productData;
