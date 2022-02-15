@@ -50,7 +50,8 @@ class PurchaseBuilderTest extends \PHPUnit\Framework\TestCase
             'pr1id' => 'simple',
             'pr1nm' => 'Simple Product',
             'pr1pr' => 10.0,
-            'pr1qt' => 2
+            'pr1qt' => 2,
+            'cd1' => 0
         ];
         $this->assertEquals($expectedArray, $eventData);
     }

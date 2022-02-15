@@ -14,7 +14,7 @@ class RefundBuilder extends AbstractBuilder
         return $this->getEventData();
     }
 
-    protected function getProductAction()
+    protected function getProductAction(): string
     {
         return 'refund';
     }
