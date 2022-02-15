@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace MageSuite\ServerSideGoogleAnalytics\Plugin\GoogleAnaylitcs\Block\Ga;
+namespace MageSuite\ServerSideGoogleAnalytics\Plugin\GoogleAnalytics\Block\Ga;
 
 class DisableOrderTracking
 {
