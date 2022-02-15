@@ -99,7 +99,7 @@ abstract class AbstractBuilder
         return $this->configuration->excludeTaxFromCalculation($this->getOrder()->getStoreId());
     }
 
-    abstract protected function getProductAction();
+    abstract protected function getProductAction(): string;
 
     abstract public function create();
 }
