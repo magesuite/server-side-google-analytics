@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <type name="Magento\GoogleAnalytics\Block\Ga">
-        <plugin name="disable_order_tracking" type="MageSuite\ServerSideGoogleAnalytics\Plugin\GoogleAnalytics\Block\Ga\DisableOrderTracking" sortOrder="10" />
+        <plugin name="disable_order_tracking" type="MageSuite\ServerSideGoogleAnalytics\Plugin\Magento\GoogleAnalytics\Block\Ga\DisableOrderTracking" sortOrder="10" />
+    </type>
+
+    <type name="MagePal\GoogleAnalytics4\Helper\Data">
+        <plugin name="disable_on_success_page" type="MageSuite\ServerSideGoogleAnalytics\Plugin\MagePal\GoogleAnalytics4\Helper\Data\DisableOnSuccessPage" sortOrder="10" />
     </type>
 </config>
