@@ -25,7 +25,7 @@ class RefundBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * @magentoDbIsolation enabled
      * @magentoAppIsolation enabled
-     * @magentoDataFixture Magento/Sales/_files/order.php
+     * @magentoDataFixture Magento/Sales/_files/order_with_two_simple_products.php
      */
     public function testRefundEventData(): void
     {
@@ -39,15 +39,19 @@ class RefundBuilderTest extends \PHPUnit\Framework\TestCase
             't' => 'event',
             'ti' => '100000001',
             'ta' => $order->getStoreName(),
-            'tr' => 100.0,
+            'tr' => 0.0,
             'ts' => 0.0,
             'tt' => 0.0,
-            'cu' => 'USD',
+            'cu' => null,
             'pa' => 'refund',
             'pr1id' => 'simple',
             'pr1nm' => 'Simple Product',
             'pr1pr' => 10.0,
-            'pr1qt' => 2,
+            'pr1qt' => 1,
+            'pr2id' => 'simple-2',
+            'pr2nm' => 'Simple Product 2',
+            'pr2qt' => 1,
+            'pr2pr' => 11.0,
             'cid' => 'dummy_id'
         ];
 

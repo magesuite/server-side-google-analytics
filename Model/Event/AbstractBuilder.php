@@ -83,7 +83,7 @@ abstract class AbstractBuilder
 
         /** @var \Magento\Sales\Model\Order\Item $orderItem */
         foreach ($this->getOrder()->getAllVisibleItems() as $orderItem) {
-            $productData = $this->productDataProvider->getProductData($orderItem, $productIndex);
+            $productData[] = $this->productDataProvider->getProductData($orderItem, $productIndex);
             $productIndex++;
 
             if ($productIndex > self::PRODUCT_LIMIT) {
@@ -91,7 +91,7 @@ abstract class AbstractBuilder
             }
         }
 
-        return $productData;
+        return array_merge([], ...$productData);
     }
 
     protected function isPriceExcludingTax(): bool
