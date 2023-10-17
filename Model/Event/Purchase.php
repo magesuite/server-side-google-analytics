@@ -31,6 +31,7 @@ class Purchase
         $eventData = $this->purchaseBuilder
             ->setOrder($order)
             ->create();
+
         $this->client->call(
             $eventData->toArray(),
             $order->getStoreId()
