@@ -1,0 +1,20 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:MageSuite_Changelog:etc/changelog.xsd">
+    <module id="MageSuite_ServerSideGoogleAnalytics" name="MageSuite_ServerSideGoogleAnalytics">
+        <changelog>
+            <tag version="1.0.0" date="2021-12-01">
+                <entry>
+                    <type>INIT</type>
+                    <overview>Module first version</overview>
+                </entry>
+            </tag>
+            <tag version="1.0.7" date="2023-10-17">
+                <entry>
+                    <type>FIX</type>
+                    <overview>Added missing parameter</overview>
+                    <description>In some cases, there was a php error because one parameter was missing. We added it and everything works now.</description>
+                    <ticket_id>IPET-2249</ticket_id>
+                </entry>
+            </tag>
+        </changelog>
+    </module>
+</config>

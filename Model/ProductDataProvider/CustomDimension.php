@@ -24,10 +24,11 @@ class CustomDimension implements \MageSuite\ServerSideGoogleAnalytics\Model\Prod
      */
     public function getProductData(\Magento\Sales\Model\Order\Item $orderItem, int $productIndex): array
     {
+        $productData = [];
         $customDimensions = $this->configuration->getProductCustomDimension($orderItem->getStoreId());
 
         if (empty($customDimensions)) {
-            return [];
+            return $productData;
         }
 
         foreach ($customDimensions as $row) {
