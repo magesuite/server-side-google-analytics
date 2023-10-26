@@ -32,6 +32,7 @@ class PurchaseTest extends \PHPUnit\Framework\TestCase
         $couponCode = $this->ruleFactory->create()->load($ruleId)->getCouponCode();
         $expectedArray = [
             'client_id' => 'dummy_id',
+            'page_location' => 'http://localhost/index.php/checkout/onepage/success/',
             'events' => [
                 [
                     'name' => 'purchase',
@@ -43,8 +44,6 @@ class PurchaseTest extends \PHPUnit\Framework\TestCase
                         'shipping' => 30.0,
                         'tax' => 4.05,
                         'session_id' => 'dummy_id',
-                        'ip_override' => '127.0.0.1',
-                        'document_path' => '/checkout/onepage/success/',
                         'items' => [
                             [
                                 'item_id' => 'simple',
