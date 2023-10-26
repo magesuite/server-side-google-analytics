@@ -5,7 +5,7 @@
             <label>MageSuite</label>
         </tab>
         <section id="server_side_google_analytics" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
-            <label>Server Side Google Analytics</label>
+            <label>Server Side Google Analytics (GA4)</label>
             <tab>magesuite</tab>
             <resource>MageSuite_ServerSideGoogleAnalytics::configuration</resource>
             <group id="general" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -14,29 +14,21 @@
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="account_number" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Account Number</label>
-                    <comment><![CDATA[e.g UA-XXXX-Y]]></comment>
+                <field id="measurement_id" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Measurement ID</label>
+                    <comment><![CDATA[e.g G-XXXXXXXXXX]]></comment>
                 </field>
-                <field id="sandbox_mode" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="api_secret" translate="label" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API Secret</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="sandbox_mode" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Sandbox Mode</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="debug_mode" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="debug_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Debug Mode</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-            </group>
-            <group id="product" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Product</label>
-                <field id="brand_attribute" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Brand Attribute</label>
-                    <source_model>MageSuite\ServerSideGoogleAnalytics\Model\Config\Source\ProductAttribute</source_model>
-                </field>
-                <field id="custom_dimension" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Custom Dimension</label>
-                    <frontend_model>MageSuite\ServerSideGoogleAnalytics\Block\Adminhtml\Form\Field\CustomDimension</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>
             </group>
         </section>

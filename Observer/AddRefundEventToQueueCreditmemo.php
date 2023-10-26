@@ -5,23 +5,17 @@ namespace MageSuite\ServerSideGoogleAnalytics\Observer;
 
 class AddRefundEventToQueueCreditmemo implements \Magento\Framework\Event\ObserverInterface
 {
-    protected $handlerClass = \MageSuite\ServerSideGoogleAnalytics\Model\Queue\RefundEventHandler::class;
-
-    /**
-     * @var \MageSuite\ServerSideGoogleAnalytics\Helper\Configuration
-     */
-    protected $configuration;
-
-    /**
-     * @var \MageSuite\Queue\Service\Publisher
-     */
-    protected $queuePublisher;
+    protected \MageSuite\ServerSideGoogleAnalytics\Helper\Configuration $configuration;
+    protected \MageSuite\ServerSideGoogleAnalytics\Model\Event\Refund $refundEvent;
+    protected \MageSuite\ServerSideGoogleAnalytics\Model\Queue\Publisher $queuePublisher;
 
     public function __construct(
         \MageSuite\ServerSideGoogleAnalytics\Helper\Configuration $configuration,
-        \MageSuite\Queue\Service\Publisher $queuePublisher
+        \MageSuite\ServerSideGoogleAnalytics\Model\Event\Refund $refundEvent,
+        \MageSuite\ServerSideGoogleAnalytics\Model\Queue\Publisher $queuePublisher
     ) {
         $this->configuration = $configuration;
+        $this->refundEvent = $refundEvent;
         $this->queuePublisher = $queuePublisher;
     }
 
@@ -32,10 +26,12 @@ class AddRefundEventToQueueCreditmemo implements \Magento\Framework\Event\Observ
         $order = $creditmemo->getOrder();
 
         if (!$this->configuration->isEnabled($order->getStoreId())
-            || !$order->getData('ga_user_id')) {
+            || !$order->getData('ga_client_id')
+            || !$order->getData('ga_session_id')) {
             return;
         }
 
-        $this->queuePublisher->publish($this->handlerClass, $order->getId());
+        $eventData = $this->refundEvent->setCreditMemo($creditmemo)->getData();
+        $this->queuePublisher->publish($eventData, (int)$order->getStoreId());
     }
 }

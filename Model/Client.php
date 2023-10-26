@@ -5,59 +5,61 @@ namespace MageSuite\ServerSideGoogleAnalytics\Model;
 
 class Client
 {
-    const PROTOCOL_VERSION = 1;
+    public const PROTOCOL_VERSION = 1;
 
-    /**
-     * @var \Magento\Framework\HTTP\Client\CurlFactory
-     */
-    protected $curlFactory;
-
-    /**
-     * @var \MageSuite\ServerSideGoogleAnalytics\Helper\Configuration
-     */
-    protected $configuration;
-
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    protected $logger;
+    protected \Magento\Framework\HTTP\Client\CurlFactory $curlFactory;
+    protected \Magento\Framework\Serialize\SerializerInterface $serializer;
+    protected \MageSuite\ServerSideGoogleAnalytics\Helper\Configuration $configuration;
+    protected \Psr\Log\LoggerInterface $logger;
 
     public function __construct(
         \Magento\Framework\HTTP\Client\CurlFactory $curlFactory,
+        \Magento\Framework\Serialize\SerializerInterface $serializer,
         \MageSuite\ServerSideGoogleAnalytics\Helper\Configuration $configuration,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->curlFactory = $curlFactory;
+        $this->serializer = $serializer;
         $this->configuration = $configuration;
         $this->logger = $logger;
     }
 
-    public function call(array $params, $storeId = null)
+    public function call(array $body, $storeId = null)
     {
-        $params['v'] = self::PROTOCOL_VERSION;
-        $params['tid'] = $this->configuration->getAccountNumber($storeId);
-        $apiUrl = $this->getApiUrl();
-        $debugData = ['url' => $apiUrl, 'params' => http_build_query($params)];
+        $apiUrl = $this->getApiUrl($storeId);
+        $json = $this->serializer->serialize($body);
+        $debugData = ['url' => $apiUrl, 'body' => $json];
         $this->debugLog($debugData);
         $curl = $this->curlFactory->create();
-        $curl->post($apiUrl, $params);
-        $debugData = ['http_code' => $curl->getStatus()];
+        $curl->addHeader('Content-Type', 'application/json');
+        $curl->post($apiUrl, $json);
+        $debugData = ['http_code' => $curl->getStatus(), 'body' => $curl->getBody()];
         $this->debugLog($debugData);
 
-        if ($curl->getStatus() !== 200) {
-            throw new \Magento\Framework\Exception\LocalizedException(
-                __('Unable to process a request to Google Anayltics!')
-            );
+        if ($curl->getStatus() >= 200 && $curl->getStatus() < 300) {
+            return;
         }
+
+        throw new \Magento\Framework\Exception\LocalizedException(
+            __('Unable to process a request to Google Analytics!')
+        );
     }
 
-    protected function getApiUrl(): string
+    protected function getApiUrl($storeId = null): string
     {
+        $apiUrl = 'https://www.google-analytics.com/';
+
         if ($this->configuration->isSandboxModeEnabled()) {
-            return 'https://www.google-analytics.com/debug/collect';
+            $apiUrl .= 'debug/';
         }
 
-        return 'https://www.google-analytics.com/collect';
+        $data = [
+            'measurement_id' => $this->configuration->getMeasurementId($storeId),
+            'api_secret' => $this->configuration->getApiSecret($storeId)
+        ];
+        $apiUrl .= 'mp/collect?' . http_build_query($data);
+
+        return $apiUrl;
     }
 
     protected function debugLog($debugData): void

@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
     <table name="sales_order" resource="default" engine="innodb">
-        <column xsi:type="varchar" name="ga_user_id" length="255" nullable="true" comment="GA User ID"/>
+        <column xsi:type="varchar" name="ga_client_id" length="255" nullable="true" comment="GA Client ID"/>
+        <column xsi:type="varchar" name="ga_session_id" length="255" nullable="true" comment="GA Session ID"/>
     </table>
 </schema>

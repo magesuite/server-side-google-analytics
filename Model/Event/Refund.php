@@ -3,37 +3,81 @@ declare(strict_types=1);
 
 namespace MageSuite\ServerSideGoogleAnalytics\Model\Event;
 
-class Refund
+class Refund implements EventInterface
 {
-    /**
-     * @var \MageSuite\ServerSideGoogleAnalytics\Model\Event\RefundBuilder
-     */
-    protected $refundBuilder;
-
-    /**
-     * @var \MageSuite\ServerSideGoogleAnalytics\Model\Client
-     */
-    protected $client;
+    protected \MageSuite\ServerSideGoogleAnalytics\Model\ItemDataProviderInterface $itemDataProvider;
+    protected \MageSuite\ServerSideGoogleAnalytics\Helper\Configuration $configuration;
+    protected ?\Magento\Sales\Api\Data\CreditmemoInterface $creditMemo = null;
 
     public function __construct(
-        \MageSuite\ServerSideGoogleAnalytics\Model\Event\RefundBuilder $refundBuilder,
-        \MageSuite\ServerSideGoogleAnalytics\Model\Client $client
+        \MageSuite\ServerSideGoogleAnalytics\Model\ItemDataProviderInterface $itemDataProvider,
+        \MageSuite\ServerSideGoogleAnalytics\Helper\Configuration $configuration
     ) {
-        $this->refundBuilder = $refundBuilder;
-        $this->client = $client;
+        $this->itemDataProvider = $itemDataProvider;
+        $this->configuration = $configuration;
     }
 
-    /**
-     * @param \Magento\Sales\Model\Order $order
-     */
-    public function execute(\Magento\Sales\Model\Order $order): void
+    public function getData(): array
     {
-        $eventData = $this->refundBuilder
-            ->setOrder($order)
-            ->create();
-        $this->client->call(
-            $eventData->toArray(),
-            $order->getStoreId()
+        $creditMemo = $this->getCreditMemo();
+        $order = $creditMemo->getOrder();
+
+        return [
+            'client_id' => (string)$order->getGaClientId(),
+            'events' => [
+                [
+                    'name' => 'refund',
+                    'params' => [
+                        'currency' => (string)$creditMemo->getOrderCurrencyCode(),
+                        'transaction_id' => (string)$order->getIncrementId(),
+                        'value' => (float)$creditMemo->getGrandTotal(),
+                        'coupon' => (string)$order->getCouponCode(),
+                        'shipping' => $this->isPriceExcludingTax()
+                            ? (float)$creditMemo->getShippingAmount()
+                            : (float)$creditMemo->getShippingInclTax(),
+                        'tax' => (float)$creditMemo->getTaxAmount(),
+                        'items' => $this->getItems()
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    protected function getItems(): array
+    {
+        $items = [];
+        $index = 0;
+
+        /** @var \Magento\Sales\Model\Order\Creditmemo\Item $item */
+        foreach ($this->getCreditMemo()->getAllItems() as $item) {
+            $item = $this->itemDataProvider->getItemData($item);
+            $item['index'] = $index;
+            $items[] = $item;
+            $index++;
+        }
+
+        return $items;
+    }
+
+    public function getCreditMemo(): \Magento\Sales\Api\Data\CreditmemoInterface
+    {
+        if ($this->creditMemo instanceof \Magento\Sales\Api\Data\CreditmemoInterface) {
+            return $this->creditMemo;
+        }
+
+        throw new \Magento\Framework\Exception\LocalizedException(
+            __('Unable to get credit memo instance.')
         );
+    }
+
+    public function setCreditMemo(\Magento\Sales\Api\Data\CreditmemoInterface $creditMemo): self
+    {
+        $this->creditMemo = $creditMemo;
+        return $this;
+    }
+
+    protected function isPriceExcludingTax(): bool
+    {
+        return $this->configuration->excludeTaxFromCalculation($this->getCreditMemo()->getStoreId());
     }
 }
