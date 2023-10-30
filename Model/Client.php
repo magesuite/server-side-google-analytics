@@ -68,6 +68,6 @@ class Client
             return;
         }
 
-        $this->logger->debug(var_export($debugData, true));
+        $this->logger->info(var_export($debugData, true));
     }
 }
