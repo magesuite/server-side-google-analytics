@@ -33,7 +33,6 @@ class PurchaseTest extends \PHPUnit\Framework\TestCase
         $event = array_pop($eventData['events']);
 
         $this->assertEquals('dummy_id', $eventData['client_id']);
-        $this->assertEquals('http://localhost/index.php/checkout/onepage/success/', $eventData['page_location']);
         $this->assertEquals('purchase', $event['name']);
         $this->assertEquals('USD', $event['params']['currency']);
         $this->assertEquals('test_order_1', $event['params']['transaction_id']);

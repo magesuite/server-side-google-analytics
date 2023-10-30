@@ -7,17 +7,14 @@ class Purchase implements EventInterface
 {
     protected \MageSuite\ServerSideGoogleAnalytics\Model\ItemDataProviderInterface $itemDataProvider;
     protected \MageSuite\ServerSideGoogleAnalytics\Helper\Configuration $configuration;
-    protected \Magento\Framework\UrlInterface $urlBuilder;
     protected ?\Magento\Sales\Api\Data\OrderInterface $order = null;
 
     public function __construct(
         \MageSuite\ServerSideGoogleAnalytics\Model\ItemDataProviderInterface $itemDataProvider,
-        \MageSuite\ServerSideGoogleAnalytics\Helper\Configuration $configuration,
-        \Magento\Framework\UrlInterface $urlBuilder
+        \MageSuite\ServerSideGoogleAnalytics\Helper\Configuration $configuration
     ) {
         $this->itemDataProvider = $itemDataProvider;
         $this->configuration = $configuration;
-        $this->urlBuilder = $urlBuilder;
     }
 
     public function getData(): array
@@ -26,7 +23,6 @@ class Purchase implements EventInterface
 
         return [
             'client_id' => (string)$order->getGaClientId(),
-            'page_location' => (string)$this->urlBuilder->getUrl('checkout/onepage/success', ['_scope' => $order->getStoreId()]),
             'events' => [
                 [
                     'name' => 'purchase',
