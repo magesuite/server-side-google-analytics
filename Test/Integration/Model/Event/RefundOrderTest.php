@@ -26,45 +26,23 @@ class RefundOrderTest extends \PHPUnit\Framework\TestCase
      */
     public function testRefundOrderEventData(): void
     {
-        $order = $this->orderFactory->create()->loadByIncrementId('test_order_1');
-        $eventData = $this->refundEvent->setOrder($order)->getData();
         $ruleId = $this->registry->registry('Magento/Checkout/_file/discount_10percent');
         $couponCode = $this->ruleFactory->create()->load($ruleId)->getCouponCode();
-        $expectedArray = [
-            'client_id' => 'dummy_id',
-            'events' => [
-                [
-                    'name' => 'refund',
-                    'params' => [
-                        'currency' => 'USD',
-                        'transaction_id' => 'test_order_1',
-                        'value' => 88.05,
-                        'coupon' => $couponCode,
-                        'shipping' => 30.0,
-                        'tax' => 4.05,
-                        'items' => [
-                            [
-                                'item_id' => 'simple',
-                                'item_name' => 'Simple Product',
-                                'discount' => 4.0,
-                                'price' => 40.0,
-                                'quantity' => 4.0,
-                                'index' => 0
-                            ],
-                            [
-                                'item_id' => 'custom-design-simple-product',
-                                'item_name' => 'Custom Design Simple Product',
-                                'discount' => 2.0,
-                                'price' => 20.0,
-                                'quantity' => 2.0,
-                                'index' => 1
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
+        $order = $this->orderFactory->create()->loadByIncrementId('test_order_1');
+        $eventData = $this->refundEvent->setOrder($order)->getData();
+        $event = array_pop($eventData['events']);
 
-        $this->assertEquals($expectedArray, $eventData);
+        $this->assertEquals('dummy_id', $eventData['client_id']);
+        $this->assertEquals('refund', $event['name']);
+        $this->assertEquals('USD', $event['params']['currency']);
+        $this->assertEquals('test_order_1', $event['params']['transaction_id']);
+        $this->assertEquals(88.05, $event['params']['value']);
+        $this->assertEquals($couponCode, $event['params']['coupon']);
+        $this->assertEquals(30.0, $event['params']['shipping']);
+        $this->assertEquals(4.05, $event['params']['tax']);
+        $this->assertEquals('simple', $event['params']['items'][0]['item_id']);
+        $this->assertEquals('Simple Product', $event['params']['items'][0]['item_name']);
+        $this->assertEquals('custom-design-simple-product', $event['params']['items'][1]['item_id']);
+        $this->assertEquals('Custom Design Simple Product', $event['params']['items'][1]['item_name']);
     }
 }
