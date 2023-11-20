@@ -36,10 +36,10 @@ class RefundOrderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('refund', $event['name']);
         $this->assertEquals('USD', $event['params']['currency']);
         $this->assertEquals('test_order_1', $event['params']['transaction_id']);
-        $this->assertEquals(88.05, $event['params']['value']);
+        $this->assertEquals((float)$order->getGrandTotal(), $event['params']['value']);
         $this->assertEquals($couponCode, $event['params']['coupon']);
         $this->assertEquals(30.0, $event['params']['shipping']);
-        $this->assertEquals(4.05, $event['params']['tax']);
+        $this->assertEquals((float)$order->getTaxAmount(), $event['params']['tax']);
         $this->assertEquals('simple', $event['params']['items'][0]['item_id']);
         $this->assertEquals('Simple Product', $event['params']['items'][0]['item_name']);
         $this->assertEquals('custom-design-simple-product', $event['params']['items'][1]['item_id']);

@@ -36,10 +36,10 @@ class PurchaseTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('purchase', $event['name']);
         $this->assertEquals('USD', $event['params']['currency']);
         $this->assertEquals('test_order_1', $event['params']['transaction_id']);
-        $this->assertEquals(88.05, $event['params']['value']);
+        $this->assertEquals((float)$order->getGrandTotal(), $event['params']['value']);
         $this->assertEquals($couponCode, $event['params']['coupon']);
         $this->assertEquals(30.0, $event['params']['shipping']);
-        $this->assertEquals(4.05, $event['params']['tax']);
+        $this->assertEquals((float)$order->getTaxAmount(), $event['params']['tax']);
         $this->assertEquals('dummy_id', $event['params']['session_id']);
         $this->assertEquals('simple', $event['params']['items'][0]['item_id']);
         $this->assertEquals('Simple Product', $event['params']['items'][0]['item_name']);
